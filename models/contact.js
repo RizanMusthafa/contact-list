@@ -68,6 +68,6 @@ function validateContact(contact) {
   });
 }
 
-const Contact = new mongoose.model('contact', contactSchema);
+const Contact = mongoose.model('contact', contactSchema);
 
 module.exports = { Contact, validateContact };

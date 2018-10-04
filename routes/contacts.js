@@ -14,4 +14,28 @@ router.get('/', async (req, res) => {
   }
 });
 
+router.post('/', async (req, res) => {
+  const inpContact = {
+    firstName: req.body.firstName,
+    lastName: req.body.lastName,
+    email: req.body.email,
+    address: req.body.address,
+    phone: req.body.phone,
+    description: req.body.description,
+    profasion: req.body.profasion
+  };
+  const { error } = validateContact(inpContact);
+  try {
+    if (error) {
+      res.status(400);
+      throw new Error(error.details[0].message);
+    }
+    const contact = new Contact(inpContact);
+    await contact.save();
+    res.status(201).send(contact);
+  } catch (ex) {
+    res.send({ error: ex.message });
+  }
+});
+
 module.exports = router;

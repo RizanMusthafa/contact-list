@@ -47,7 +47,13 @@ function validateUser(user) {
       .min(2)
       .max(150)
       .trim()
-      .email()
+      .email(),
+    isAdmin: Joi.boolean()
+      .optional()
+      .default(false),
+    proPic: Joi.string()
+      .optional()
+      .default('default.png')
   });
 }
 

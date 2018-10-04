@@ -62,4 +62,27 @@ router.get('/:id', async (req, res) => {
   }
 });
 
+router.put('/:id', async (req, res) => {
+  const id = req.params.id;
+  const inpUser = {
+    fName: req.body.fName,
+    sName: req.body.sName,
+    isAdmin: req.body.isAdmin,
+    proPic: req.body.proPic
+  };
+  try {
+    const user = await User.findByIdAndUpdate(id, inpUser, {
+      new: true,
+      runValidators: true
+    });
+    if (!user) {
+      res.status(404);
+      throw new Error('can not found the user');
+    }
+    res.send({ results: user });
+  } catch (ex) {
+    res.send({ error: ex.message });
+  }
+});
+
 module.exports = router;

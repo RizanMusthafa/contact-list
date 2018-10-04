@@ -85,4 +85,18 @@ router.put('/:id', async (req, res) => {
   }
 });
 
+router.delete('/:id', async (req, res) => {
+  const id = req.params.id;
+  try {
+    const user = await User.findByIdAndDelete(id);
+    if (!user) {
+      res.send(404);
+      throw new Error('Can not Find user');
+    }
+    res.send({ results: user });
+  } catch (ex) {
+    res.send({ error: ex.message });
+  }
+});
+
 module.exports = router;

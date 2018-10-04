@@ -32,7 +32,21 @@ router.post('/', async (req, res) => {
     }
     const contact = new Contact(inpContact);
     await contact.save();
-    res.status(201).send(contact);
+    res.status(201).send({ results: contact });
+  } catch (ex) {
+    res.send({ error: ex.message });
+  }
+});
+
+router.get('/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const contact = await Contact.findById(id);
+    if (!contact) {
+      res.status(404);
+      throw new Error('can no find that contact');
+    }
+    res.send({ results: contact });
   } catch (ex) {
     res.send({ error: ex.message });
   }

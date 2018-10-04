@@ -9,6 +9,6 @@ module.exports = function(req, res, next) {
     req.body.user = user;
     next();
   } catch (ex) {
-    res.status(403).send({ error: ex.message });
+    res.status(403).send({ error: 'Access Denied: ' + ex.message });
   }
 };

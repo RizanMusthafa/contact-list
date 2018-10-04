@@ -1,5 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const usersRouter = require('./routes/users');
+
 const app = express();
 
 mongoose
@@ -13,6 +15,8 @@ mongoose
   .catch(ex => console.log('DB CONNECT ERROR: ', ex.message));
 
 app.use(express.json());
+
+app.use('/api/users', usersRouter);
 
 app.get('/', (req, res) => {
   res.send('hello world');

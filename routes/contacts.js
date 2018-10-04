@@ -1,9 +1,10 @@
 const express = require('express');
 const { Contact, validateContact } = require('../models/contact');
+const loginGuard = require('../middlewares/loginGuard');
 
 const router = express.Router();
 
-router.get('/', async (req, res) => {
+router.get('/', loginGuard, async (req, res) => {
   try {
     const contacts = await Contact.find()
       .sort('firstName lastName')
@@ -14,7 +15,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-router.post('/', async (req, res) => {
+router.post('/', loginGuard, async (req, res) => {
   const inpContact = {
     firstName: req.body.firstName,
     lastName: req.body.lastName,
@@ -38,7 +39,7 @@ router.post('/', async (req, res) => {
   }
 });
 
-router.get('/:id', async (req, res) => {
+router.get('/:id', loginGuard, async (req, res) => {
   const { id } = req.params;
   try {
     const contact = await Contact.findById(id);
@@ -52,7 +53,7 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-router.put('/:id', async (req, res) => {
+router.put('/:id', loginGuard, async (req, res) => {
   const { id } = req.params;
   delete req.body['_id'];
   try {
@@ -70,7 +71,7 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', loginGuard, async (req, res) => {
   const { id } = req.params;
   try {
     const contact = await Contact.findByIdAndDelete(id);

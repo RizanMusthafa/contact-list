@@ -52,4 +52,22 @@ router.get('/:id', async (req, res) => {
   }
 });
 
+router.put('/:id', async (req, res) => {
+  const { id } = req.params;
+  delete req.body['_id'];
+  try {
+    const contact = await Contact.findByIdAndUpdate(id, req.body, {
+      new: true,
+      runValidators: true
+    });
+    if (!contact) {
+      res.status(404);
+      throw new Error('can no find that contact');
+    }
+    res.send({ results: contact });
+  } catch (ex) {
+    res.send({ error: ex.message });
+  }
+});
+
 module.exports = router;

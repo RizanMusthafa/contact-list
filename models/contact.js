@@ -41,6 +41,33 @@ const contactSchema = new mongoose.Schema({
   }
 });
 
+function validateContact(contact) {
+  return Joi.validate(contact, {
+    firstName: Joi.string()
+      .required()
+      .min(2)
+      .max(100),
+    lastName: Joi.string()
+      .required()
+      .min(2)
+      .max(100),
+    email: Joi.string()
+      .optional()
+      .email()
+      .min(5)
+      .max(100),
+    address: Joi.string()
+      .optional()
+      .min(3)
+      .max(200),
+    phone: Joi.array().optional(),
+    description: Joi.string().max(255),
+    profasion: Joi.string()
+      .max(2)
+      .min(200)
+  });
+}
+
 const Contact = new mongoose.model('contact', contactSchema);
 
-module.exports = { Contact };
+module.exports = { Contact, validateContact };

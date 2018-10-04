@@ -2,6 +2,7 @@ const express = require('express');
 const { User, validateUser } = require('../models/user');
 const bcrypt = require('bcrypt');
 const loginGuard = require('../middlewares/loginGuard');
+const adminGuard = require('../middlewares/adminGuard');
 
 const router = express.Router();
 
@@ -16,7 +17,7 @@ router.get('/', loginGuard, async (req, res) => {
   }
 });
 
-router.post('/', loginGuard, async (req, res) => {
+router.post('/', [loginGuard, adminGuard], async (req, res) => {
   const inpUser = {
     fName: req.body.fName,
     sName: req.body.sName,
@@ -63,7 +64,7 @@ router.get('/:id', loginGuard, async (req, res) => {
   }
 });
 
-router.put('/:id', loginGuard, async (req, res) => {
+router.put('/:id', [loginGuard, adminGuard], async (req, res) => {
   const id = req.params.id;
   delete req.body['_id'];
   delete req.body['password'];
@@ -82,7 +83,7 @@ router.put('/:id', loginGuard, async (req, res) => {
   }
 });
 
-router.delete('/:id', loginGuard, async (req, res) => {
+router.delete('/:id', [loginGuard, adminGuard], async (req, res) => {
   const id = req.params.id;
   try {
     const user = await User.findByIdAndDelete(id);

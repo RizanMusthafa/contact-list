@@ -7,7 +7,7 @@ router.get('/', async (req, res) => {
   try {
     const contacts = await Contact.find()
       .sort('firstName lastName')
-      .select('fistName lastName');
+      .select('firstName lastName');
     res.send({ results: contacts });
   } catch (ex) {
     res.send({ error: ex.message });

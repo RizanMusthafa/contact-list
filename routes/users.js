@@ -31,7 +31,7 @@ router.post('/', async (req, res) => {
       throw new Error(error.details[0].message);
     }
 
-    const dupUser = await User.find({ email: inpUser.email });
+    const dupUser = await User.findOne({ email: inpUser.email });
     if (dupUser) {
       res.status(400);
       throw new Error(`"${inpUser.email}" is already exists`);
@@ -92,6 +92,20 @@ router.delete('/:id', async (req, res) => {
     res.send({ results: user });
   } catch (ex) {
     res.send({ error: ex.message });
+  }
+});
+
+router.post('/login', async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    const user = await User.findOne({ email });
+    if (!user) throw new Error('can not found the email');
+    const isValid = await bcrypt.compare(password, user.password);
+    if (!isValid) throw new Error('Invalid password');
+    const token = user.generateAuthToken();
+    res.send({ results: token });
+  } catch (ex) {
+    res.status(400).send({ error: 'Invalid email or password' });
   }
 });
 

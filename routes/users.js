@@ -64,14 +64,10 @@ router.get('/:id', async (req, res) => {
 
 router.put('/:id', async (req, res) => {
   const id = req.params.id;
-  const inpUser = {
-    fName: req.body.fName,
-    sName: req.body.sName,
-    isAdmin: req.body.isAdmin,
-    proPic: req.body.proPic
-  };
+  delete req.body['_id'];
+  delete req.body['password'];
   try {
-    const user = await User.findByIdAndUpdate(id, inpUser, {
+    const user = await User.findByIdAndUpdate(id, req.body, {
       new: true,
       runValidators: true
     });

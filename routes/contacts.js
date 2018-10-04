@@ -70,4 +70,18 @@ router.put('/:id', async (req, res) => {
   }
 });
 
+router.delete('/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const contact = await Contact.findByIdAndDelete(id);
+    if (!contact) {
+      res.status(404);
+      throw new Error('can not find the contact');
+    }
+    res.send({ results: contact });
+  } catch (ex) {
+    res.send({ error: ex.message });
+  }
+});
+
 module.exports = router;

@@ -1,11 +1,15 @@
 import React, { Component } from 'react';
+import Navbar from './components/navbar';
 
 class App extends Component {
   render() {
     return (
-      <div className="App">
-        <h1>Contact List Maneger</h1>
-      </div>
+      <React.Fragment>
+        <Navbar />
+        <div className="container">
+          <h1>Content Area</h1>
+        </div>
+      </React.Fragment>
     );
   }
 }

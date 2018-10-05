@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import Navbar from './components/navbar';
+import Login from './components/views/login';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 
 class App extends Component {
   render() {
@@ -7,7 +9,11 @@ class App extends Component {
       <React.Fragment>
         <Navbar />
         <div className="container">
-          <h1>Content Area</h1>
+          <Router>
+            <Switch>
+              <Route exact path="/login" component={Login} />
+            </Switch>
+          </Router>
         </div>
       </React.Fragment>
     );

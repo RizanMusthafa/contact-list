@@ -1,11 +1,22 @@
 import React from 'react';
 
 class Login extends React.Component {
+  state = {
+    email: '',
+    password: ''
+  };
+  handleFieldChange = e => {
+    this.setState({ [e.target.name]: e.target.value });
+  };
+
+  handleSubmit = e => {
+    e.preventDefault();
+  };
   render() {
     return (
       <div className="row">
         <div className="col-sm-8 offset-sm-2">
-          <form className="my-5 card">
+          <form onSubmit={this.handleSubmit} className="my-5 card">
             <div className="card-header">
               <h3>Login</h3>
             </div>
@@ -17,6 +28,8 @@ class Login extends React.Component {
                   className="form-control"
                   placeholder="Email Address"
                   name="email"
+                  value={this.state.email}
+                  onChange={this.handleFieldChange}
                 />
               </div>
               <div className="form-group">
@@ -26,6 +39,8 @@ class Login extends React.Component {
                   className="form-control"
                   placeholder="Password"
                   name="password"
+                  value={this.state.password}
+                  onChange={this.handleFieldChange}
                 />
               </div>
             </div>

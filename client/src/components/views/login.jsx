@@ -4,7 +4,7 @@ class Login extends React.Component {
   render() {
     return (
       <div className="row">
-        <div className="col-sm-6 offset-sm-3">
+        <div className="col-sm-8 offset-sm-2">
           <form className="my-5 card">
             <div className="card-header">
               <h3>Login</h3>

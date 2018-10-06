@@ -1,4 +1,7 @@
 import React from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { login } from '../../actions/auth-action';
 
 class Login extends React.Component {
   state = {
@@ -11,8 +14,10 @@ class Login extends React.Component {
 
   handleSubmit = e => {
     e.preventDefault();
+    this.props.login();
   };
   render() {
+    console.log(this.props.token);
     return (
       <div className="row">
         <div className="col-sm-8 offset-sm-2">
@@ -54,4 +59,22 @@ class Login extends React.Component {
   }
 }
 
-export default Login;
+function mapStateToProps(state) {
+  return {
+    token: state.auth.token
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators(
+    {
+      login
+    },
+    dispatch
+  );
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Login);

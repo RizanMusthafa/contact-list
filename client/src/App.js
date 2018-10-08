@@ -8,17 +8,17 @@ import Contacts from './components/views/contacts';
 class App extends Component {
   render() {
     return (
-      <React.Fragment>
-        <Navbar />
-        <div className="container">
-          <Router>
+      <Router>
+        <React.Fragment>
+          <Navbar />
+          <div className="container">
             <Switch>
               <Route exact path="/login" component={Login} />
               <UserRoute exact path="/" component={Contacts} />
             </Switch>
-          </Router>
-        </div>
-      </React.Fragment>
+          </div>
+        </React.Fragment>
+      </Router>
     );
   }
 }

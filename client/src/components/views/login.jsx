@@ -1,26 +1,50 @@
 import React from 'react';
+import PropType from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { login } from '../../actions/auth-action';
+import { Redirect } from 'react-router-dom';
 
 class Login extends React.Component {
   state = {
+    from: null,
     email: '',
-    password: ''
+    password: '',
+    errors: {
+      email: [],
+      password: []
+    }
   };
+
+  static PropType = {
+    login: PropType.func.isRequired,
+    token: PropType.string.isRequired
+  };
+
+  componentDidMount() {
+    const token = localStorage.getItem('token');
+    if (token) {
+      this.props.login(null, token);
+    }
+  }
+
   handleFieldChange = e => {
     this.setState({ [e.target.name]: e.target.value });
   };
 
   handleSubmit = e => {
     e.preventDefault();
-    this.props.login();
+    this.props.login({
+      email: this.state.email,
+      password: this.state.password
+    });
   };
+
   render() {
-    console.log(this.props.token);
+    if (this.props.token) return <Redirect to="/" />;
     return (
       <div className="row">
-        <div className="col-sm-8 offset-sm-2">
+        <div className="col-md-6 offset-md-3">
           <form onSubmit={this.handleSubmit} className="my-5 card">
             <div className="card-header">
               <h3>Login</h3>

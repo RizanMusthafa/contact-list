@@ -1,9 +1,10 @@
 import React from 'react';
 import { Route } from 'react-router-dom';
 import Redirect from 'react-router-dom/Redirect';
+import { connect } from 'react-redux';
 
-const UserRoute = ({ component: Component, ...rest }) => {
-  const isLogin = false;
+const UserRoute = ({ component: Component, token, ...rest }) => {
+  const isLogin = Boolean(token);
   return (
     <Route
       {...rest}
@@ -18,4 +19,4 @@ const UserRoute = ({ component: Component, ...rest }) => {
   );
 };
 
-export default UserRoute;
+export default connect(state => ({ token: state.auth.token }))(UserRoute);

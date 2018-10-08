@@ -1,4 +1,4 @@
-import { LOGIN } from './types';
+import { LOGIN, LOGOUT } from './types';
 import Axios from 'axios';
 
 export const login = (user, token, cb) => async dispatch => {
@@ -11,4 +11,12 @@ export const login = (user, token, cb) => async dispatch => {
     type: LOGIN,
     payload: token
   });
+};
+
+export const logout = () => {
+  localStorage.removeItem('token');
+  return {
+    type: LOGOUT,
+    payload: null
+  };
 };

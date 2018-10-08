@@ -1,4 +1,4 @@
-import { LOGIN } from '../actions/types';
+import { LOGIN, LOGOUT } from '../actions/types';
 
 const intialState = {
   token: null,
@@ -9,6 +9,8 @@ export default (state = intialState, action) => {
   switch (action.type) {
     case LOGIN:
       return { token: action.payload, user: null };
+    case LOGOUT:
+      return { token: null, user: null };
     default:
       return state;
   }

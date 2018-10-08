@@ -1,5 +1,8 @@
 import React from 'react';
 import Link from 'react-router-dom/Link';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { logout } from '../actions/auth-action';
 
 class Navbar extends React.Component {
   render() {
@@ -10,9 +13,28 @@ class Navbar extends React.Component {
             Contact Maneger
           </Link>
         </div>
+        <ul className="navbar-nav">
+          <li className="nav-item">
+            <button onClick={this.props.logout} className="btn btn-danger">
+              LogOut
+            </button>
+          </li>
+        </ul>
       </nav>
     );
   }
 }
 
-export default Navbar;
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators(
+    {
+      logout
+    },
+    dispatch
+  );
+}
+
+export default connect(
+  null,
+  mapDispatchToProps
+)(Navbar);

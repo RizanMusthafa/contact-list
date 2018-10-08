@@ -14,15 +14,23 @@ class Navbar extends React.Component {
           </Link>
         </div>
         <ul className="navbar-nav">
-          <li className="nav-item">
-            <button onClick={this.props.logout} className="btn btn-danger">
-              LogOut
-            </button>
-          </li>
+          {this.props.token ? (
+            <li className="nav-item">
+              <button onClick={this.props.logout} className="btn btn-danger">
+                LogOut
+              </button>
+            </li>
+          ) : null}
         </ul>
       </nav>
     );
   }
+}
+
+function mapStateToProps(state) {
+  return {
+    token: state.auth.token
+  };
 }
 
 function mapDispatchToProps(dispatch) {
@@ -35,6 +43,6 @@ function mapDispatchToProps(dispatch) {
 }
 
 export default connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps
 )(Navbar);

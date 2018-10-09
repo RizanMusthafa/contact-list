@@ -12,16 +12,16 @@ class Navbar extends React.Component {
           <Link to="/" className="navbar-brand">
             Contact Maneger
           </Link>
+          <ul className="navbar-nav">
+            {this.props.token ? (
+              <li className="nav-item">
+                <button onClick={this.props.logout} className="btn btn-danger">
+                  LogOut
+                </button>
+              </li>
+            ) : null}
+          </ul>
         </div>
-        <ul className="navbar-nav">
-          {this.props.token ? (
-            <li className="nav-item">
-              <button onClick={this.props.logout} className="btn btn-danger">
-                LogOut
-              </button>
-            </li>
-          ) : null}
-        </ul>
       </nav>
     );
   }

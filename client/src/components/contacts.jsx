@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { getContacts } from '../../actions/contacts-action';
+import { getContacts } from '../actions/contacts-action';
 
 class Contacts extends React.Component {
   componentDidMount() {
@@ -9,11 +9,22 @@ class Contacts extends React.Component {
   }
 
   render() {
-    if (!this.props.contacts) return <h1>Loading...</h1>;
+    if (!this.props.contacts)
+      return (
+        <div class="progress">
+          <div
+            class="progress-bar bg-danger progress-bar-striped progress-bar-animated"
+            style={{ width: 100 + '%' }}
+          />
+        </div>
+      );
     return (
-      <ul className="list-group my-5">
+      <ul className="list-group">
         {this.props.contacts.map(contact => (
-          <li key={contact._id} className="list-group-item">
+          <li
+            key={contact._id}
+            className="list-group-item list-group-item-action"
+          >
             {contact.firstName} {contact.lastName}
           </li>
         ))}

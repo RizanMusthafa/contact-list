@@ -3,7 +3,7 @@ import Navbar from './components/navbar';
 import Login from './components/views/login';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import UserRoute from './user-route';
-import Contacts from './components/views/contacts';
+import Home from './components/views/home';
 
 class App extends Component {
   render() {
@@ -11,10 +11,10 @@ class App extends Component {
       <Router>
         <React.Fragment>
           <Navbar />
-          <div className="container">
+          <div className="container-fluid">
             <Switch>
               <Route exact path="/login" component={Login} />
-              <UserRoute exact path="/" component={Contacts} />
+              <UserRoute exact path="/" component={Home} />
             </Switch>
           </div>
         </React.Fragment>

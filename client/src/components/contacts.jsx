@@ -11,9 +11,9 @@ class Contacts extends React.Component {
   render() {
     if (!this.props.contacts)
       return (
-        <div class="progress">
+        <div className="progress">
           <div
-            class="progress-bar bg-danger progress-bar-striped progress-bar-animated"
+            className="progress-bar bg-danger progress-bar-striped progress-bar-animated"
             style={{ width: 100 + '%' }}
           />
         </div>

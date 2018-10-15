@@ -1,7 +1,35 @@
 import React from 'react';
+import Axios from 'axios';
+import { connect } from 'react-redux';
 
 class Contact extends React.Component {
+  state = {
+    contact: null,
+    isEditable: true
+  };
+
+  componentDidUpdate(prevProps) {
+    if (!this.props.contact || this.props.contact === prevProps.contact) return;
+    Axios.get('http://localhost:3300/api/contacts/' + this.props.contact._id, {
+      headers: {
+        'x-auth-token': this.props.token
+      }
+    })
+      .then(res => this.setState({ contact: res.data.results }))
+      .catch(err => console.log(err));
+  }
+
   render() {
+    const { contact, isEditable } = this.state;
+    if (!contact)
+      return (
+        <div className="progress">
+          <div
+            className="progress-bar bg-danger progress-bar-striped progress-bar-animated"
+            style={{ width: 100 + '%' }}
+          />
+        </div>
+      );
     return (
       <div className="container-fluid">
         <div className="row">
@@ -10,9 +38,10 @@ class Contact extends React.Component {
             <input
               type="text"
               name="firstName"
-              disabled={true}
+              placeholder="first name not provided"
+              disabled={isEditable}
               className="form-control"
-              value="Rizan"
+              value={contact.firstName}
             />
           </div>
           <div className="form-group col-sm-6">
@@ -20,9 +49,10 @@ class Contact extends React.Component {
             <input
               type="text"
               name="lastName"
-              disabled={true}
+              placeholder="last name not provided"
+              disabled={isEditable}
               className="form-control"
-              value="Mohomed"
+              value={contact.lastName}
             />
           </div>
           <div className="form-group col-sm-12">
@@ -30,9 +60,10 @@ class Contact extends React.Component {
             <input
               type="text"
               name="phone"
-              disabled={true}
+              placeholder="phone number not provided"
+              disabled={isEditable}
               className="form-control"
-              value="0778672721 , 0729448284"
+              value={contact.phone.map(c => ' ' + c + ' ')}
             />
           </div>
           <div className="form-group col-sm-6">
@@ -40,9 +71,10 @@ class Contact extends React.Component {
             <input
               type="text"
               name="email"
-              disabled={true}
+              disabled={isEditable}
               className="form-control"
-              value="musthafarizan@gmail.com"
+              placeholder="Email not provided"
+              value={contact.email}
             />
           </div>
           <div className="form-group col-sm-6">
@@ -50,9 +82,10 @@ class Contact extends React.Component {
             <input
               type="text"
               name="profcian"
-              disabled={true}
+              disabled={isEditable}
               className="form-control"
-              value="Web Devoloper"
+              placeholder="Profcian not provided"
+              value={contact.profasion}
             />
           </div>
           <div className="form-group col-sm-12">
@@ -60,9 +93,10 @@ class Contact extends React.Component {
             <input
               type="text"
               name="address"
-              disabled={true}
+              placeholder="Address not provided"
+              disabled={isEditable}
               className="form-control"
-              value="47/11 school lane hirimbura cross road galle"
+              value={contact.address}
             />
           </div>
           <div className="form-group col-sm-12">
@@ -70,8 +104,9 @@ class Contact extends React.Component {
             <textarea
               name="description"
               className="form-control"
-              disabled={true}
-              defaultValue="He is an super admin for this site"
+              placeholder="Description not provided"
+              disabled={isEditable}
+              defaultValue={contact.description}
             />
           </div>
         </div>
@@ -80,4 +115,11 @@ class Contact extends React.Component {
   }
 }
 
-export default Contact;
+function mapStateToProps({ auth, contacts }) {
+  return {
+    token: auth.token,
+    contact: contacts.contact
+  };
+}
+
+export default connect(mapStateToProps)(Contact);

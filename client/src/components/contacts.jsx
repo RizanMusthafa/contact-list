@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { getContacts } from '../actions/contacts-action';
+import { getContacts, setCurrentContact } from '../actions/contacts-action';
 
 class Contacts extends React.Component {
   componentDidMount() {
@@ -20,14 +20,20 @@ class Contacts extends React.Component {
       );
     return (
       <ul className="list-group">
-        {this.props.contacts.map(contact => (
-          <li
-            key={contact._id}
-            className="list-group-item list-group-item-action"
-          >
-            {contact.firstName} {contact.lastName}
-          </li>
-        ))}
+        {this.props.contacts.map(contact => {
+          const classList =
+            'list-group-item list-group-item-action' +
+            (this.props.contact === contact ? ' active' : '');
+          return (
+            <li
+              key={contact._id}
+              onClick={() => this.props.setCurrentContact(contact)}
+              className={classList}
+            >
+              {contact.firstName} {contact.lastName}
+            </li>
+          );
+        })}
       </ul>
     );
   }
@@ -36,14 +42,16 @@ class Contacts extends React.Component {
 function mapStateToProps({ auth, contacts }) {
   return {
     token: auth.token,
-    contacts: contacts.contacts
+    contacts: contacts.contacts,
+    contact: contacts.contact
   };
 }
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(
     {
-      getContacts
+      getContacts,
+      setCurrentContact
     },
     dispatch
   );

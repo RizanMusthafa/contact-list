@@ -1,6 +1,6 @@
 const express = require('express');
 const { User, validateUser } = require('../models/user');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const loginGuard = require('../middlewares/loginGuard');
 const adminGuard = require('../middlewares/adminGuard');
 

@@ -1,6 +1,7 @@
 import React from 'react';
 import Axios from 'axios';
 import { connect } from 'react-redux';
+import ContactService from '../services/contact-service';
 
 class Contact extends React.Component {
   state = {
@@ -8,15 +9,15 @@ class Contact extends React.Component {
     isEditable: true
   };
 
-  componentDidUpdate(prevProps) {
+  constructor(props) {
+    super(props);
+    this.contactService = new ContactService(props.token);
+  }
+
+  async componentDidUpdate(prevProps) {
     if (!this.props.contact || this.props.contact === prevProps.contact) return;
-    Axios.get('http://localhost:3300/api/contacts/' + this.props.contact._id, {
-      headers: {
-        'x-auth-token': this.props.token
-      }
-    })
-      .then(res => this.setState({ contact: res.data.results }))
-      .catch(err => console.log(err));
+    const res = await this.contactService.getOneContact(this.props.contact._id);
+    this.setState({ contact: res.res });
   }
 
   render() {

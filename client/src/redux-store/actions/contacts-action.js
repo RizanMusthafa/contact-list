@@ -1,16 +1,10 @@
-import Axios from 'axios';
 import { GET_CONTACTS, SET_CURRENT_CONTACT } from './types';
 
-export const getContacts = token => async dispatch => {
-  const res = await Axios.get('http://localhost:3300/api/contacts/', {
-    headers: {
-      'x-auth-token': token
-    }
-  });
-  dispatch({
+export const setContacts = contacts => {
+  return {
     type: GET_CONTACTS,
-    payload: res.data.results
-  });
+    payload: contacts
+  };
 };
 
 export const setCurrentContact = contact => {

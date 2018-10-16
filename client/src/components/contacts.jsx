@@ -1,14 +1,29 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { getContacts, setCurrentContact } from '../actions/contacts-action';
+import {
+  setContacts,
+  setCurrentContact
+} from '../redux-store/actions/contacts-action';
+import ContactService from '../services/contact-service';
 
 class Contacts extends React.Component {
-  componentDidMount() {
-    this.props.getContacts(this.props.token);
+  state = {
+    error: null
+  };
+  constructor(props) {
+    super(props);
+    this.contactService = new ContactService(props.token);
+  }
+  async componentDidMount() {
+    const res = await this.contactService.getAllContacts();
+    if (res.err) return this.setState({ error: res.err });
+    this.props.setContacts(res.res);
   }
 
   render() {
+    if (this.state.error)
+      return <div className="alert alert-danger">{this.state.error}</div>;
     if (!this.props.contacts)
       return (
         <div className="progress">
@@ -50,7 +65,7 @@ function mapStateToProps({ auth, contacts }) {
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(
     {
-      getContacts,
+      setContacts,
       setCurrentContact
     },
     dispatch

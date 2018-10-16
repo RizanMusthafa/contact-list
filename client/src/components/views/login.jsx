@@ -4,10 +4,12 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { login } from '../../actions/auth-action';
 import { Redirect } from 'react-router-dom';
+import UserService from '../../services/user-service';
 
 class Login extends React.Component {
   state = {
     from: null,
+    formErr: null,
     email: '',
     password: '',
     errors: {
@@ -15,6 +17,11 @@ class Login extends React.Component {
       password: []
     }
   };
+
+  constructor(props) {
+    super(props);
+    this.userService = new UserService();
+  }
 
   static PropType = {
     login: PropType.func.isRequired,
@@ -24,20 +31,30 @@ class Login extends React.Component {
   componentDidMount() {
     const token = localStorage.getItem('token');
     if (token) {
-      this.props.login(null, token);
+      this.props.login(token);
     }
   }
 
   handleFieldChange = e => {
-    this.setState({ [e.target.name]: e.target.value });
+    this.setState({ [e.target.name]: e.target.value, formErr: null });
   };
 
   handleSubmit = e => {
     e.preventDefault();
-    this.props.login({
-      email: this.state.email,
-      password: this.state.password
-    });
+    this.userService
+      .loginUser({
+        email: this.state.email,
+        password: this.state.password
+      })
+      .then(res => {
+        // this.setState({ formErr: res.error.response.data.error })
+        if (res.error)
+          if (res.error.response)
+            this.setState({ formErr: res.error.response.data.error });
+          else this.setState({ formErr: res.error.message });
+        else this.props.login(res.res);
+      })
+      .catch(err => this.setState({ formErr: err }));
   };
 
   render() {
@@ -48,6 +65,7 @@ class Login extends React.Component {
           <form onSubmit={this.handleSubmit} className="my-5 card">
             <div className="card-header">
               <h3>Login</h3>
+              <div className="text-danger">{this.state.formErr}</div>
             </div>
             <div className="card-body">
               <div className="form-group">

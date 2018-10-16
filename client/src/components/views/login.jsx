@@ -2,7 +2,7 @@ import React from 'react';
 import PropType from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { login } from '../../actions/auth-action';
+import { login } from '../../redux-store/actions/auth-action';
 import { Redirect } from 'react-router-dom';
 import UserService from '../../services/user-service';
 
@@ -47,7 +47,7 @@ class Login extends React.Component {
         password: this.state.password
       })
       .then(res => {
-        if (res.error) this.setState({ formErr: res.error });
+        if (res.err) this.setState({ formErr: res.err });
         else this.props.login(res.res);
       })
       .catch(err => this.setState({ formErr: err }));

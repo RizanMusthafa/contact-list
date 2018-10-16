@@ -2,7 +2,7 @@ import React from 'react';
 import Link from 'react-router-dom/Link';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { logout } from '../actions/auth-action';
+import { logout } from '../redux-store/actions/auth-action';
 
 class Navbar extends React.Component {
   render() {

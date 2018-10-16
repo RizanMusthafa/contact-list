@@ -47,11 +47,7 @@ class Login extends React.Component {
         password: this.state.password
       })
       .then(res => {
-        // this.setState({ formErr: res.error.response.data.error })
-        if (res.error)
-          if (res.error.response)
-            this.setState({ formErr: res.error.response.data.error });
-          else this.setState({ formErr: res.error.message });
+        if (res.error) this.setState({ formErr: res.error });
         else this.props.login(res.res);
       })
       .catch(err => this.setState({ formErr: err }));

@@ -10,7 +10,9 @@ class UserService {
       const res = await Axios.post(this.usrl + '/login', user);
       obj.res = res.data.results;
     } catch (ex) {
-      obj.error = ex;
+      ex.response
+        ? (obj.error = ex.response.data.error)
+        : (obj.error = ex.message);
     }
     return obj;
   }

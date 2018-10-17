@@ -5,6 +5,7 @@ import { bindActionCreators } from 'redux';
 import { login } from '../../redux-store/actions/auth-action';
 import { Redirect } from 'react-router-dom';
 import UserService from '../../services/user-service';
+import FormValidate from '../../common/form-validate';
 
 class Login extends React.Component {
   state = {
@@ -21,6 +22,21 @@ class Login extends React.Component {
   constructor(props) {
     super(props);
     this.userService = new UserService();
+    this.loginFormValidate = new FormValidate([
+      {
+        field: 'email',
+        name: 'Email',
+        required: true,
+        pattern: /^rizan$/,
+        minLength: 5,
+        maxLength: 100
+      },
+      {
+        field: 'password',
+        name: 'Password',
+        required: true
+      }
+    ]);
   }
 
   static PropType = {
@@ -30,17 +46,25 @@ class Login extends React.Component {
 
   componentDidMount() {
     const token = localStorage.getItem('token');
-    if (token) {
-      this.props.login(token);
-    }
+    if (token) this.props.login(token);
   }
 
   handleFieldChange = e => {
     this.setState({ [e.target.name]: e.target.value, formErr: null });
   };
 
+  isValid() {
+    const { isValid, err } = this.loginFormValidate.validate({
+      email: this.state.email,
+      password: this.state.password
+    });
+    this.setState({ errors: err });
+    return isValid;
+  }
+
   handleSubmit = e => {
     e.preventDefault();
+    if (!this.isValid()) return;
     this.userService
       .loginUser({
         email: this.state.email,
@@ -67,24 +91,40 @@ class Login extends React.Component {
               <div className="form-group">
                 <label htmlFor="email">Email:</label>
                 <input
-                  type="email"
-                  className="form-control"
+                  type="text"
+                  className={
+                    'form-control' +
+                    (this.state.errors.email.length ? ' is-invalid' : '')
+                  }
                   placeholder="Email Address"
                   name="email"
                   value={this.state.email}
                   onChange={this.handleFieldChange}
                 />
+                <div className="invalid-feedback">
+                  {this.state.errors.email.map(err => (
+                    <p key={err}>{err}</p>
+                  ))}
+                </div>
               </div>
               <div className="form-group">
                 <label htmlFor="password">Password:</label>
                 <input
                   type="password"
-                  className="form-control"
+                  className={
+                    'form-control' +
+                    (this.state.errors.password.length ? ' is-invalid' : '')
+                  }
                   placeholder="Password"
                   name="password"
                   value={this.state.password}
                   onChange={this.handleFieldChange}
                 />
+                <div className="invalid-feedback">
+                  {this.state.errors.password.map(err => (
+                    <p key={err}>{err}</p>
+                  ))}
+                </div>
               </div>
             </div>
             <div className="card-footer text-right">

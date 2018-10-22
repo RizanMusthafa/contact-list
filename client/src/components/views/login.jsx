@@ -6,6 +6,7 @@ import { login } from '../../redux-store/actions/auth-action';
 import { Redirect } from 'react-router-dom';
 import UserService from '../../services/user-service';
 import FormValidate from '../../common/form-validate';
+import loginFromModal from '../../form-modals/login';
 
 class Login extends React.Component {
   state = {
@@ -22,21 +23,7 @@ class Login extends React.Component {
   constructor(props) {
     super(props);
     this.userService = new UserService();
-    this.loginFormValidate = new FormValidate([
-      {
-        field: 'email',
-        name: 'Email',
-        required: true,
-        pattern: /^rizan$/,
-        minLength: 5,
-        maxLength: 100
-      },
-      {
-        field: 'password',
-        name: 'Password',
-        required: true
-      }
-    ]);
+    this.loginFormValidate = new FormValidate(loginFromModal);
   }
 
   static PropType = {

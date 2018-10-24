@@ -15,9 +15,7 @@ class ContactService {
   set requestHeader(token) {
     this._reqHeaders['x-auth-token'] = token;
   }
-  test() {
-    console.log(this.reqHeaders['x-auth-token']);
-  }
+
   async getAllContacts() {
     const obj = common.createResultObj();
     try {
@@ -37,6 +35,20 @@ class ContactService {
       const res = await Axios.get(`${this.url}/${id}`, {
         headers: this._reqHeaders
       });
+      obj.res = res.data.results;
+    } catch (ex) {
+      obj.err = common.msgFromEx(ex);
+    }
+    return obj;
+  }
+
+  async updateContact(contact, id) {
+    const obj = common.createResultObj();
+    try {
+      const res = await Axios.put(`${this.url}/${id}`, contact, {
+        headers: this._reqHeaders
+      });
+      if (res.data.error) throw new Error(res.data.error);
       obj.res = res.data.results;
     } catch (ex) {
       obj.err = common.msgFromEx(ex);

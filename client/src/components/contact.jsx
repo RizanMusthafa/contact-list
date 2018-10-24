@@ -1,9 +1,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import ContactService from '../services/contact-service';
+import contactFormValidate from '../form-modals/contact';
 
 class Contact extends React.Component {
-  emptyContact = () => ({
+  currentContact = {
     firstName: '',
     lastName: '',
     email: '',
@@ -11,11 +12,13 @@ class Contact extends React.Component {
     phone: [],
     description: '',
     profasion: ''
-  });
+  };
 
   state = {
-    contact: this.emptyContact(),
-    isEditable: false
+    ERR: null,
+    contact: this.currentContact,
+    isEditable: false,
+    errors: null
   };
 
   constructor(props) {
@@ -28,16 +31,14 @@ class Contact extends React.Component {
     const { res } = await this.contactService.getOneContact(
       this.props.contact._id
     );
-    const newContact = {
-      firstName: res.firstName,
-      lastName: res.lastName,
-      email: res.email,
-      address: res.address,
-      phone: res.phone,
-      description: res.description,
-      profasion: res.profasion
-    };
-    this.setState({ contact: newContact });
+    this.currentContact.firstName = res.firstName || '';
+    this.currentContact.lastName = res.lastName || '';
+    this.currentContact.email = res.email || '';
+    this.currentContact.address = res.address || '';
+    this.currentContact.phone = res.phone || '';
+    this.currentContact.description = res.description || '';
+    this.currentContact.profasion = res.profasion || '';
+    this.setState({ contact: this.currentContact });
   }
 
   async componentDidUpdate(prevProps) {
@@ -50,8 +51,31 @@ class Contact extends React.Component {
     else await this.getAndSetContact();
   };
 
+  fieldChange = e => {
+    this.currentContact[e.target.name] = e.target.value;
+    this.setState({ contact: this.currentContact });
+  };
+
+  isValid() {
+    const { isValid, err } = contactFormValidate.validate(this.state.contact);
+    this.setState({ errors: err });
+    return isValid;
+  }
+
+  handleSubmit = async e => {
+    e.preventDefault();
+    if (!this.isValid()) return;
+    const { res, err } = await this.contactService.updateContact(
+      this.state.contact,
+      this.props.contact._id
+    );
+    if (err) return this.setState({ ERR: err });
+    console.log(res);
+    this.setState({ isEditable: false });
+  };
+
   render() {
-    const { contact, isEditable } = this.state;
+    const { contact, isEditable, ERR } = this.state;
     if (!contact)
       return (
         <div className="alert alert-warning">
@@ -60,13 +84,17 @@ class Contact extends React.Component {
       );
     return (
       <div className="container-fluid">
-        <div className="row">
+        {ERR ? <div className="alert alert-danger">{ERR}</div> : null}
+        <form className="row" onSubmit={this.handleSubmit}>
           <div className="col-sm-12 text-right">
             <button
+              type="button"
               onClick={this.handleEditBtn}
-              className="btn btn-sm btn-warning"
+              className={
+                'btn px-3 btn-sm btn-' + (!isEditable ? 'warning' : 'secondary')
+              }
             >
-              Edit
+              {!isEditable ? 'Edit' : 'Cancel'}
             </button>
           </div>
           <div className="form-group col-sm-6">
@@ -78,6 +106,7 @@ class Contact extends React.Component {
               disabled={!isEditable}
               className="form-control"
               value={contact.firstName}
+              onChange={this.fieldChange}
             />
           </div>
           <div className="form-group col-sm-6">
@@ -89,6 +118,7 @@ class Contact extends React.Component {
               disabled={!isEditable}
               className="form-control"
               value={contact.lastName}
+              onChange={this.fieldChange}
             />
           </div>
           <div className="form-group col-sm-12">
@@ -100,6 +130,7 @@ class Contact extends React.Component {
               disabled={!isEditable}
               className="form-control"
               value={contact.phone}
+              onChange={this.fieldChange}
             />
           </div>
           <div className="form-group col-sm-6">
@@ -111,6 +142,7 @@ class Contact extends React.Component {
               className="form-control"
               placeholder="Email not provided"
               value={contact.email}
+              onChange={this.fieldChange}
             />
           </div>
           <div className="form-group col-sm-6">
@@ -122,6 +154,7 @@ class Contact extends React.Component {
               className="form-control"
               placeholder="Profcian not provided"
               value={contact.profasion}
+              onChange={this.fieldChange}
             />
           </div>
           <div className="form-group col-sm-12">
@@ -133,6 +166,7 @@ class Contact extends React.Component {
               disabled={!isEditable}
               className="form-control"
               value={contact.address}
+              onChange={this.fieldChange}
             />
           </div>
           <div className="form-group col-sm-12">
@@ -142,10 +176,14 @@ class Contact extends React.Component {
               className="form-control"
               placeholder="Description not provided"
               disabled={!isEditable}
-              defaultValue={contact.description}
+              defaultValue={contact.description || ''}
+              onChange={this.fieldChange}
             />
           </div>
-        </div>
+          <div className="text-right col-sm-12">
+            <button className="btn btn-sm btn-success px-3">Submit</button>
+          </div>
+        </form>
       </div>
     );
   }

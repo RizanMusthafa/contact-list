@@ -62,7 +62,9 @@ function validateContact(contact) {
       .min(3)
       .max(200),
     phone: Joi.array().optional(),
-    description: Joi.string().max(255),
+    description: Joi.string()
+      .max(255)
+      .optional(),
     profasion: Joi.string()
       .max(200)
       .optional()

@@ -1,7 +1,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import {
+  addContact,
+  editContact
+} from '../redux-store/actions/contacts-action';
 import ContactService from '../services/contact-service';
 import contactFormValidate from '../form-modals/contact';
+import { bindActionCreators } from 'redux';
 
 class Contact extends React.Component {
   emptyContact = () => ({
@@ -92,11 +97,13 @@ class Contact extends React.Component {
     let resContact;
     if (this.state.isNew) {
       resContact = await this.contactService.addNewContact(this.state.contact);
+      if (resContact.res) this.props.addContact(resContact.res);
     } else {
       resContact = await this.contactService.updateContact(
         this.state.contact,
         this.props.contact._id
       );
+      if (resContact.res) this.props.editContact(resContact.res);
     }
     const { res, err } = resContact;
     if (err) return this.setState({ ERR: err });
@@ -104,7 +111,8 @@ class Contact extends React.Component {
     this.setState({
       isEditable: false,
       isNew: false,
-      errors: this.emptyError()
+      errors: this.emptyError(),
+      ERR: null
     });
   };
 
@@ -281,4 +289,17 @@ function mapStateToProps({ auth, contacts }) {
   };
 }
 
-export default connect(mapStateToProps)(Contact);
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators(
+    {
+      addContact,
+      editContact
+    },
+    dispatch
+  );
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Contact);

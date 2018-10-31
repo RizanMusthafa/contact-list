@@ -37,7 +37,8 @@ const contactSchema = new mongoose.Schema({
     maxlength: 255
   },
   profasion: {
-    type: String
+    type: String,
+    maxlength: 200
   }
 });
 
@@ -63,8 +64,8 @@ function validateContact(contact) {
     phone: Joi.array().optional(),
     description: Joi.string().max(255),
     profasion: Joi.string()
-      .max(2)
-      .min(200)
+      .max(200)
+      .optional()
   });
 }
 

@@ -4,7 +4,7 @@ import ContactService from '../services/contact-service';
 import contactFormValidate from '../form-modals/contact';
 
 class Contact extends React.Component {
-  currentContact = {
+  emptyContact = () => ({
     firstName: '',
     lastName: '',
     email: '',
@@ -12,13 +12,22 @@ class Contact extends React.Component {
     phone: [],
     description: '',
     profasion: ''
-  };
+  });
+  emptyError = () => ({
+    firstName: [],
+    lastName: [],
+    email: [],
+    address: [],
+    profacian: []
+  });
+  currentContact = this.emptyContact();
 
   state = {
     ERR: null,
     contact: this.currentContact,
     isEditable: false,
-    errors: null
+    isNew: false,
+    errors: this.emptyError()
   };
 
   constructor(props) {
@@ -48,11 +57,26 @@ class Contact extends React.Component {
 
   handleEditBtn = async () => {
     if (!this.state.isEditable) this.setState({ isEditable: true });
-    else await this.getAndSetContact();
+    else {
+      this.setState({ errors: this.emptyError() });
+      await this.getAndSetContact();
+    }
+  };
+
+  handleAddBtn = () => {
+    this.currentContact = this.emptyContact();
+    this.setState({
+      isEditable: true,
+      contact: this.emptyContact(),
+      isNew: true
+    });
   };
 
   fieldChange = e => {
-    this.currentContact[e.target.name] = e.target.value;
+    if (e.target.name === 'phone')
+      this.currentContact[e.target.name] = e.target.value.split(',');
+    else this.currentContact[e.target.name] = e.target.value;
+
     this.setState({ contact: this.currentContact });
   };
 
@@ -65,13 +89,23 @@ class Contact extends React.Component {
   handleSubmit = async e => {
     e.preventDefault();
     if (!this.isValid()) return;
-    const { res, err } = await this.contactService.updateContact(
-      this.state.contact,
-      this.props.contact._id
-    );
+    let resContact;
+    if (this.state.isNew) {
+      resContact = await this.contactService.addNewContact(this.state.contact);
+    } else {
+      resContact = await this.contactService.updateContact(
+        this.state.contact,
+        this.props.contact._id
+      );
+    }
+    const { res, err } = resContact;
     if (err) return this.setState({ ERR: err });
     console.log(res);
-    this.setState({ isEditable: false });
+    this.setState({
+      isEditable: false,
+      isNew: false,
+      errors: this.emptyError()
+    });
   };
 
   render() {
@@ -96,6 +130,15 @@ class Contact extends React.Component {
             >
               {!isEditable ? 'Edit' : 'Cancel'}
             </button>
+            {!isEditable ? (
+              <button
+                type="button"
+                className="btn btn-sm btn-success px-3 ml-3"
+                onClick={this.handleAddBtn}
+              >
+                Add New
+              </button>
+            ) : null}
           </div>
           <div className="form-group col-sm-6">
             <label htmlFor="firstName">First Name</label>
@@ -104,10 +147,18 @@ class Contact extends React.Component {
               name="firstName"
               placeholder="first name not provided"
               disabled={!isEditable}
-              className="form-control"
+              className={
+                'form-control' +
+                (this.state.errors.firstName.length ? ' is-invalid' : '')
+              }
               value={contact.firstName}
               onChange={this.fieldChange}
             />
+            <ul className="invalid-feedback">
+              {this.state.errors.firstName.map(e => (
+                <li key={e}>{e}</li>
+              ))}
+            </ul>
           </div>
           <div className="form-group col-sm-6">
             <label htmlFor="lastName">Last Name</label>
@@ -116,10 +167,18 @@ class Contact extends React.Component {
               name="lastName"
               placeholder="last name not provided"
               disabled={!isEditable}
-              className="form-control"
+              className={
+                'form-control' +
+                (this.state.errors.lastName.length ? ' is-invalid' : '')
+              }
               value={contact.lastName}
               onChange={this.fieldChange}
             />
+            <ul className="invalid-feedback">
+              {this.state.errors.lastName.map(e => (
+                <li key={e}>{e}</li>
+              ))}
+            </ul>
           </div>
           <div className="form-group col-sm-12">
             <label htmlFor="lastName">Phone Numbers</label>
@@ -139,11 +198,19 @@ class Contact extends React.Component {
               type="text"
               name="email"
               disabled={!isEditable}
-              className="form-control"
+              className={
+                'form-control' +
+                (this.state.errors.email.length ? ' is-invalid' : '')
+              }
               placeholder="Email not provided"
               value={contact.email}
               onChange={this.fieldChange}
             />
+            <ul className="invalid-feedback">
+              {this.state.errors.email.map(e => (
+                <li key={e}>{e}</li>
+              ))}
+            </ul>
           </div>
           <div className="form-group col-sm-6">
             <label htmlFor="profcian">Profcian</label>
@@ -151,11 +218,19 @@ class Contact extends React.Component {
               type="text"
               name="profasion"
               disabled={!isEditable}
-              className="form-control"
+              className={
+                'form-control' +
+                (this.state.errors.profacian.length ? ' is-invalid' : '')
+              }
               placeholder="Profcian not provided"
               value={contact.profasion}
               onChange={this.fieldChange}
             />
+            <ul className="invalid-feedback">
+              {this.state.errors.profacian.map(e => (
+                <li key={e}>{e}</li>
+              ))}
+            </ul>
           </div>
           <div className="form-group col-sm-12">
             <label htmlFor="address">Address</label>
@@ -164,10 +239,18 @@ class Contact extends React.Component {
               name="address"
               placeholder="Address not provided"
               disabled={!isEditable}
-              className="form-control"
+              className={
+                'form-control' +
+                (this.state.errors.address.length ? ' is-invalid' : '')
+              }
               value={contact.address}
               onChange={this.fieldChange}
             />
+            <ul className="invalid-feedback">
+              {this.state.errors.address.map(e => (
+                <li key={e}>{e}</li>
+              ))}
+            </ul>
           </div>
           <div className="form-group col-sm-12">
             <label htmlFor="description">Decription</label>
@@ -180,9 +263,11 @@ class Contact extends React.Component {
               onChange={this.fieldChange}
             />
           </div>
-          <div className="text-right col-sm-12">
-            <button className="btn btn-sm btn-success px-3">Submit</button>
-          </div>
+          {isEditable ? (
+            <div className="text-right col-sm-12">
+              <button className="btn btn-sm btn-success px-3">Submit</button>
+            </div>
+          ) : null}
         </form>
       </div>
     );

@@ -55,6 +55,20 @@ class ContactService {
     }
     return obj;
   }
+
+  async addNewContact(contact) {
+    const obj = common.createResultObj();
+    try {
+      const res = await Axios.post(this.url, contact, {
+        headers: this._reqHeaders
+      });
+      if (res.data.error) throw new Error(res.data.error);
+      obj.res = res.data.results;
+    } catch (ex) {
+      obj.err = common.msgFromEx(ex);
+    }
+    return obj;
+  }
 }
 
 export default ContactService;
